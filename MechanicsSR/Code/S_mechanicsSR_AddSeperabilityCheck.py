@@ -148,7 +148,7 @@ def check_separability_plus(pathdir, filename):
                         print(t3_found)
                         break
             print('er_idx=',er_idx)
-            if er == 0:
+            if er_idx == 0:
                 print('missing necessary value')
                 print(xy_bar_search[t_x])
                 print(x_bary_search[t_y])
