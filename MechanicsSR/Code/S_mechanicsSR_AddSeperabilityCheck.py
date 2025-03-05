@@ -158,6 +158,7 @@ def check_separability_plus(pathdir, filename):
                     if t3_found ==1:
                         print(t3_found)
                         break
+                    print('tx')
                     print(t_x)
             print('er_idx=',er_idx)
             if er_idx == 0:
