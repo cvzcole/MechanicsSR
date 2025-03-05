@@ -127,6 +127,7 @@ def check_separability_plus(pathdir, filename):
             idx_ybar = xy_bar.shape[0]
             idx_xbar = x_bary.shape[0]
             print(idx_ogdata)
+            
             #initiate the idx_number of matching point
             er_idx = 0
             for t3 in range(idx_ogdata):
@@ -160,6 +161,7 @@ def check_separability_plus(pathdir, filename):
                         break
                     print('tx')
                     print(t_x)
+                    print(idx_ybar)
             print('er_idx=',er_idx)
             if er_idx == 0:
                 print('missing necessary value')
