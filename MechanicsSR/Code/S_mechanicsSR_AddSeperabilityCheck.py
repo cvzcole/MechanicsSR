@@ -145,8 +145,13 @@ def check_separability_plus(pathdir, filename):
                                 t3_found = 1
                                 break
                     if t3_found ==1:
+                        print(t3_found)
                         break
             print('er_idx=',er_idx)
+            if er == 0:
+                print('missing necessary value')
+                print(xy_bar_search[t_x])
+                print(x_bary_search[t_y])
             if er_idx > 0:
                 print('er_idx=',er_idx)
                 mse= Er_add / er_idx
