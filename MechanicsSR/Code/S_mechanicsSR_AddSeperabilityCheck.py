@@ -132,7 +132,9 @@ def check_separability_plus(pathdir, filename):
             for t3 in range(idx_ogdata):
                 t3_found=0
                 for t_x in range(idx_ybar):
+                    print('og')
                     print(ogdata[t3,j])
+                    print('search')
                     print(xy_bar_search[t_x])
                     if np.all(ogdata[t3,j]==xy_bar_search[t_x]):
                         for t_y in range(idx_xbar):
