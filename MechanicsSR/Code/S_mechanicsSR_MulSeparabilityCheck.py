@@ -20,7 +20,7 @@ def check_separability_mul(pathdir, filename):
     tolerance = 0.05
     print('start to check multiplication separability')
     # compare first 4 digits
-    digits_tolerance = 1e-3
+    digits_tolerance = 1e-5
     # load the data
     n_variables = np.loadtxt(pathdir+filename, dtype='str').shape[1]-1
     variables = np.loadtxt(pathdir+filename, usecols=(0,))
@@ -112,9 +112,9 @@ def check_separability_mul(pathdir, filename):
             for t3 in range(idx_ogdata):
                 t3_found=0
                 for t_x in range(idx_ybar):
-                    if np.all(ogdata[t3,j]==xy_bar_search[t_x]):
+                    if np.all(np.isclose(ogdata[t3, j], xy_bar_search[t_x], atol = digits_tolerance)):
                         for t_y in range(idx_xbar):
-                            if np.all(ogdata[t3,rest_indx]==x_bary_search[t_y]):
+                            if np.all(np.isclose(ogdata[t3, rest_indx], x_bary_search[t_y], atol = digits_tolerance)):
                                 # find a new matching point idx+1
                                 er_idx = er_idx+1
                                 section2 =  (xy_bar[t_x,-1] * x_bary[t_y,-1])/fact_constant
