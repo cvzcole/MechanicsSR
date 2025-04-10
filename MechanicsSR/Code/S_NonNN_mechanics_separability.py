@@ -73,8 +73,8 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             fact_vary_one[:,t1] = torch.full((len(factors),),torch.median(factors[:,t1]))
         for t2 in list_i:
             fact_vary_rest[:,t2] = torch.full((len(factors),),torch.median(factors[:,t2]))
-        np_fact_one = fact_vary_one.numpy() # transfer to numpy form
-        np_fact_rest = fact_vary_rest.numpy()   
+        np_fact_one = fact_vary_one.cpu().numpy() # transfer to numpy form
+        np_fact_rest = fact_vary_rest.cpu().numpy()   
         data_sep_1 = np.empty((0,n_variables+1))
         data_sep_2 = np.empty((0,n_variables+1))
         with torch.no_grad():
@@ -171,8 +171,8 @@ def do_separability_multiply(pathdir, filename, list_i,list_j):
         
         fact_vary_one = factors.clone()  # replace only list_j columns to mean value
         fact_vary_rest = factors.clone() # replace only list_i columns to mean value
-        np_fact_one = fact_vary_one.numpy() # transfer to numpy form
-        np_fact_rest = fact_vary_rest.numpy() 
+        np_fact_one = fact_vary_one.cpu().numpy() # transfer to numpy form
+        np_fact_rest = fact_vary_rest.cpu().numpy() 
         #print('done',np_fact_one)
 
         for t1 in list_j:
