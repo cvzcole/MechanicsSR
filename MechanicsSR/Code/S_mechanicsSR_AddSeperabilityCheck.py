@@ -35,10 +35,10 @@ def check_separability_plus(pathdir, filename):
     f_dependent = np.loadtxt(pathdir+filename, usecols=(n_variables,))
     f_dependent = np.reshape(f_dependent,(len(f_dependent),1))   
     factors = torch.from_numpy(variables) 
-    factors = factors.float()
+    factors = factors.double()
 
     product = torch.from_numpy(f_dependent)
-    product = product.float()
+    product = product.double()
 
     fact_vary = factors.clone()
     for k in range(len(factors[0])):
@@ -128,9 +128,9 @@ def check_separability_plus(pathdir, filename):
             for t3 in range(idx_ogdata):
                 t3_found=0
                 for t_x in range(idx_ybar):
-                    if np.all(np.isclose(ogdata[t3, j], xy_bar_search[t_x], atol = digits_tolerance)):
+                    if np.all(ogdata[t3, j] == xy_bar_search[t_x]):
                         for t_y in range(idx_xbar):
-                            if np.all(np.isclose(ogdata[t3, rest_indx], x_bary_search[t_y], atol = digits_tolerance)):
+                            if np.all(ogdata[t3, rest_indx] == x_bary_search[t_y]):
                                 # find a new matching point idx+1
                                 er_idx = er_idx+1
                                 section2 = - xy_bar[t_x,-1] - x_bary[t_y,-1]
