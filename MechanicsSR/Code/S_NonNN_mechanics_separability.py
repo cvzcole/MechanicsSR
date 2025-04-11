@@ -48,14 +48,14 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             factors = factors.cuda()
         else:
             factors = factors
-        factors = factors.float()
+        factors = factors.double()
 
         product = torch.from_numpy(f_dependent)
         if is_cuda:
             product = product.cuda()
         else:
             product = product
-        product = product.float()
+        product = product.double()
 
         #model.load_state_dict(torch.load(pathdir_weights+filename+".h5"))
         #model.eval()
@@ -152,11 +152,11 @@ def do_separability_multiply(pathdir, filename, list_i,list_j):
 
         factors = torch.from_numpy(variables)  # factors are variables in tensor form
 
-        factors = factors.float()
+        factors = factors.double()
 
         product = torch.from_numpy(f_dependent)
 
-        product = product.float()
+        product = product.double()
 
         # load the trained model and put it in evaluation mode
 
