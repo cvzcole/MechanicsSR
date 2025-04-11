@@ -68,14 +68,14 @@ def check_separability_plus(pathdir, filename):
             factors = factors.cuda()
         else:
             factors = factors
-        factors = factors.float()
+        factors = factors.double()
 
         product = torch.from_numpy(f_dependent)
         if is_cuda:
             product = product.cuda()
         else:
             product = product
-        product = product.float()
+        product = product.double()
 
         # load the trained model and put it in evaluation mode
         if is_cuda:
@@ -154,14 +154,14 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             factors = factors.cuda()
         else:
             factors = factors
-        factors = factors.float()
+        factors = factors.double()
 
         product = torch.from_numpy(f_dependent)
         if is_cuda:
             product = product.cuda()
         else:
             product = product
-        product = product.float()
+        product = product.double()
 
         # load the trained model and put it in evaluation mode
         if is_cuda:
@@ -270,14 +270,14 @@ def check_separability_multiply(pathdir, filename):
             factors = factors.cuda()
         else:
             factors = factors
-        factors = factors.float()
+        factors = factors.double()
 
         product = torch.from_numpy(f_dependent)
         if is_cuda:
             product = product.cuda()
         else:
             product = product
-        product = product.float()
+        product = product.double()
 
         # load the trained model and put it in evaluation mode
         if is_cuda:
@@ -357,14 +357,14 @@ def do_separability_multiply(pathdir, filename, list_i,list_j):
             factors = factors.cuda()
         else:
             factors = factors
-        factors = factors.float()
+        factors = factors.double()
 
         product = torch.from_numpy(f_dependent)
         if is_cuda:
             product = product.cuda()
         else:
             product = product
-        product = product.float()
+        product = product.double()
 
         # load the trained model and put it in evaluation mode
         if is_cuda:
