@@ -1,4 +1,5 @@
 from __future__ import print_function
+from decimal import Decimal
 import torch
 import os
 import torch.optim as optim
@@ -19,13 +20,17 @@ def rmse_loss(pred, targ):
     denom = torch.sqrt(denom.sum()/len(denom))
     return torch.sqrt(F.mse_loss(pred, targ))/denom
             
+is_cuda = torch.cuda.is_available()
+            
 def do_separability_plus(pathdir, filename, list_i,list_j):
+    np.set_printoptions(precision=20, suppress=False)
     try:
 
         # load the data
         fullpath = pathdir + filename
         n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
-        variables = np.loadtxt(fullpath, usecols=(0,))
+        variables = np.array([Decimal(x) for x in np.loadtxt(pathdir + filename, usecols=(0,), dtype=str)])
+        #variables = np.loadtxt(fullpath, usecols=(0,))
 
         if n_variables==1:
             print(filename, "just one variable for ADD")
@@ -33,22 +38,22 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             return (-1,-1,-1)
         else:
             for j in range(1, n_variables):
-                v = np.loadtxt(fullpath, usecols=(j,))
+                v = np.array([Decimal(x) for x in np.loadtxt(pathdir + filename, usecols=(j,), dtype=str)])
                 variables = np.column_stack((variables, v))
             for j in range(1, n_variables + 1):
-                v = np.loadtxt(fullpath, usecols=(j,))
+                v = np.array([Decimal(x) for x in np.loadtxt(pathdir + filename, usecols=(j,), dtype=str)])
                 ogdata = np.column_stack((variables, v))
         
-        print('check here ogdata',variables)
+        print('check here ogdata', np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in variables]))
 
         f_dependent = np.loadtxt(fullpath, usecols = (n_variables,))
         f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
 
         factors = variables.astype(np.double) 
-        #print(factors)
+        #print(np.array2string(factors, formatter={'all': lambda x: f"{x:.20f}"}))
 
         product = f_dependent.astype(np.double)
-        #print(product)
+        #print(np.array2string(product, formatter={'all': lambda x: f"{x:.20f}"}))
         
         fact_vary_one = np.copy(factors)
         fact_vary_rest = np.copy(factors)
@@ -73,6 +78,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                     break
 
         data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
+        data_sep_1 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_1])
         print('additive datasep1 prepared', data_sep_1)
 
         # Save second part
@@ -86,6 +92,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                     break
 
         data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
+        data_sep_2 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_2])
         print('additive datasep2 prepared', data_sep_2)
 
         try:
@@ -103,29 +110,29 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
 
     except Exception as e:
         print("Error:", e)
-        return (-1, -1)
-    
+        return (-1, -1, -1)
+
 def do_separability_multiply(pathdir, filename, list_i, list_j):
     try:
         # Load the data
-        full_path = pathdir + filename
-        n_variables = np.loadtxt(full_path, dtype='str').shape[1] - 1
-        variables = np.loadtxt(full_path, usecols=(0,))
+        fullpath = pathdir + filename
+        n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
+        variables = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(0,), dtype=str)])
         
         if n_variables == 1:
             print(filename, "just one variable for MULT")
             return (-1, -1, -1)
         else:
             for j in range(1, n_variables):
-                v = np.loadtxt(full_path, usecols=(j,))
+                v = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(j,), dtype=str)])
                 variables = np.column_stack((variables, v))
             for j in range(1, n_variables + 1):
-                v = np.loadtxt(full_path, usecols=(j,))
+                v = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(j,), dtype=str)])
                 ogdata = np.column_stack((variables, v))  # original dataset in numpy form
 
-        print('check here ogdata', variables)
+        print('check here ogdata', np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in variables]))
 
-        f_dependent = np.loadtxt(full_path, usecols=(n_variables,))
+        f_dependent = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(n_variables,), dtype=str)])
         f_dependent = f_dependent.reshape((len(f_dependent), 1))
 
         factors = variables.astype(np.double)
@@ -157,6 +164,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
                     break
 
         data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
+        data_sep_1 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_1])
         print('datasep1 prepared', data_sep_1)
 
         # Match fact_vary_rest rows with original factors
@@ -170,6 +178,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
                     break
 
         data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
+        data_sep_2 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_2])
         print('datasep2 prepared', data_sep_2)
 
         # Save results
@@ -189,7 +198,6 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
     except Exception as e:
         print("Error:", e)
         return (-1, -1)
-
 
 '''
 ######################################################################################################################################
