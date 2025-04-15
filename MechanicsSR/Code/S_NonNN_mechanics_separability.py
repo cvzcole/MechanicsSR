@@ -44,10 +44,10 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         f_dependent = np.loadtxt(fullpath, usecols = (n_variables,))
         f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
 
-        factors = variables.astype(np.float64) 
+        factors = variables.astype(np.double) 
         #print(factors)
 
-        product = f_dependent.astype(np.float64)
+        product = f_dependent.astype(np.double)
         #print(product)
         
         fact_vary_one = np.copy(factors)
@@ -67,7 +67,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             ck1 = fact_vary_one[i]
             for j in range(len(factors)):
                 ck2 = factors[j]
-                if np.allclose(ck1, ck2, atol=1e-6):
+                if np.all(ck1 == ck2):
                     new_row = ogdata[j, :]
                     data_sep_1 = np.vstack([data_sep_1, new_row])
                     break
@@ -80,7 +80,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             ck1 = fact_vary_rest[i]
             for j in range(len(factors)):
                 ck2 = factors[j]
-                if np.allclose(ck1, ck2, atol=1e-6):
+                if np.all(ck1 == ck2):
                     new_row = ogdata[j, :]
                     data_sep_2 = np.vstack([data_sep_2, new_row])
                     break
