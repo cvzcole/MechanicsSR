@@ -1,5 +1,5 @@
 from __future__ import print_function
-from decimal import Decimal
+from decimal import Decimal, getcontext
 import torch
 import os
 import torch.optim as optim
@@ -23,14 +23,15 @@ def rmse_loss(pred, targ):
 is_cuda = torch.cuda.is_available()
             
 def load_exact_data(filepath, usecols):
+    getcontext().prec = 30
     data = []
     with open(filepath, 'r') as f:
         for line in f:
             if line.strip():  # Skip empty lines
                 parts = line.strip().split()
-                row = [float(parts[i]) for i in usecols]
+                row = [Decimal(parts[i]) for i in usecols]
                 data.append(row)
-    return np.array(data, dtype=np.float64)
+    return np.array(data, dtype=object)
             
 def do_separability_plus(pathdir, filename, list_i,list_j):
     np.set_printoptions(precision=20, suppress=False)
@@ -40,8 +41,6 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         fullpath = pathdir + filename
         n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
         variables = load_exact_data(fullpath, (0,))
-        #variables = np.array([Decimal(x) for x in np.loadtxt(pathdir + filename, usecols=(0,), dtype=str)])
-        #variables = np.loadtxt(fullpath, usecols=(0,))
 
         if n_variables==1:
             print(filename, "just one variable for ADD")
@@ -57,7 +56,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         
         print('check here ogdata', variables)
 
-        f_dependent = np.loadtxt(fullpath, usecols = (n_variables,))
+        f_dependent = load_exact_data(fullpath, (n_variables,))
         f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
 
         factors = variables.astype(np.double) 
@@ -66,62 +65,61 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         product = f_dependent.astype(np.double)
         #print(np.array2string(product, formatter={'all': lambda x: f"{x:.20f}"}))
         
-        fact_vary_one = np.copy(factors)
-        fact_vary_rest = np.copy(factors)
+        def decimal_median(arr):
+            flat_arr = arr.flatten()
+            sorted_arr = np.sort(flat_arr)
+            n = len(sorted_arr)
+            mid = n // 2
+            if n % 2 == 1:
+                return sorted_arr[mid]
+            return (sorted_arr[mid - 1] + sorted_arr[mid]) / Decimal(2)
+
+        # Create median-replaced versions
+        factors = variables.copy()
+        fact_vary_one = factors.copy()
+        fact_vary_rest = factors.copy()
 
         for t1 in list_j:
-            fact_vary_one[:, t1] = np.median(factors[:, t1])
+            fact_vary_one[:, t1] = decimal_median(factors[:, t1])
         for t2 in list_i:
-            fact_vary_rest[:, t2] = np.median(factors[:, t2])
+            fact_vary_rest[:, t2] = decimal_median(factors[:, t2])
 
-        # Prepare outputs
-        data_sep_1 = np.empty((0, n_variables + 1))
-        data_sep_2 = np.empty((0, n_variables + 1))
+        # Find matching rows (using Decimal equality)
+        def find_matches(reference, full_data):
+            matches = []
+            for ref_row in reference:
+                for data_row in full_data:
+                    if all(x.compare(y) == 0 for x, y in zip(ref_row, data_row[:, :n_variables])):
+                        matches.append(data_row)
+                        break
+            return np.array(matches, dtype=object)
 
-        # Save first part
-        for i in range(len(fact_vary_one)):
-            ck1 = fact_vary_one[i]
-            for j in range(len(factors)):
-                ck2 = factors[j]
-                if np.all(ck1 == ck2):
-                    new_row = ogdata[j, :]
-                    data_sep_1 = np.vstack([data_sep_1, new_row])
-                    break
+        data_sep_1 = find_matches(fact_vary_one, ogdata)
+        data_sep_2 = find_matches(fact_vary_rest, ogdata)
 
+        # Remove specified columns
         data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
-        #data_sep_1 = np.array([[float(x) for x in row] for row in data_sep_1])
-        print('additive datasep1 prepared', data_sep_1)
-
-        # Save second part
-        for i in range(len(fact_vary_rest)):
-            ck1 = fact_vary_rest[i]
-            for j in range(len(factors)):
-                ck2 = factors[j]
-                if np.all(ck1 == ck2):
-                    new_row = ogdata[j, :]
-                    data_sep_2 = np.vstack([data_sep_2, new_row])
-                    break
-
         data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
-        #data_sep_2 = np.array([[np.double(x) for x in row] for row in data_sep_2])
-        print('additive datasep2 prepared', data_sep_2)
 
-        try:
-            os.makedirs("results/separable_add/", exist_ok=True)
-        except:
-            pass
+        # Save with exact precision
+        os.makedirs("results/separable_add/", exist_ok=True)
+        str1 = f"{filename}-add_a"
+        str2 = f"{filename}-add_b"
 
-        str1 = filename + "-add_a"
-        str2 = filename + "-add_b"
+        # Custom decimal-aware savetxt
+        def save_decimal_array(filename, array):
+            with open(filename, 'w') as f:
+                for row in array:
+                    f.write(' '.join([str(x) for x in row]) + '\n')
 
-        np.savetxt("results/separable_add/" + str1, data_sep_1)
-        np.savetxt("results/separable_add/" + str2, data_sep_2)
+        save_decimal_array(f"results/separable_add/{str1}", data_sep_1)
+        save_decimal_array(f"results/separable_add/{str2}", data_sep_2)
 
         return ("results/separable_add/", str1, "results/separable_add/", str2)
 
     except Exception as e:
-        print("Error:", e)
-        return (-1, -1, -1)
+        print(f"Error in do_separability_plus: {str(e)}")
+        return (-1, -1)
 
 def do_separability_multiply(pathdir, filename, list_i, list_j):
     try:
