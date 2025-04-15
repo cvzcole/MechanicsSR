@@ -35,89 +35,89 @@ def load_exact_data(filepath, usecols):
 
 def do_separability_plus(pathdir, filename, list_i, list_j):
     np.set_printoptions(precision=20, suppress=False)
+    getcontext().prec = 20  # Set Decimal precision
+
     try:
-        # load the data
-        fullpath = pathdir + filename
-        n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
-        variables = load_exact_data(fullpath, (0,))
+        # Load the data
+        fullpath = os.path.join(pathdir, filename)
+        data = np.loadtxt(fullpath, dtype=np.float64)  # Load as float64 for consistency
+        n_variables = data.shape[1] - 1
 
         if n_variables == 1:
             print(filename, "just one variable for ADD")
             return (-1, -1, -1)
-        else:
-            for j in range(1, n_variables):
-                v = load_exact_data(fullpath, (j,))
-                variables = np.column_stack((variables, v))
-            for j in range(1, n_variables + 1):
-                v = load_exact_data(fullpath, (j,))
-                ogdata = np.column_stack((variables, v))
 
-        print('check here ogdata', variables)
+        # Extract variables and dependent variable
+        variables = data[:, :-1].astype(np.float64)
+        f_dependent = data[:, -1].reshape(-1, 1).astype(np.float64)
+        ogdata = np.column_stack((variables, f_dependent))
 
-        f_dependent = np.loadtxt(fullpath, usecols=(n_variables,))
-        f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
+        print('Original data:', variables)
 
-        # Convert all data to np.float64 at the beginning to ensure consistent precision
-        factors = variables.astype(np.float64)
-        product = f_dependent.astype(np.float64)
-        ogdata = ogdata.astype(np.float64)
+        # Avoid np.median (use mean or exact midpoint if needed)
+        fact_vary_one = variables.copy()
+        fact_vary_rest = variables.copy()
 
-        fact_vary_one = np.copy(factors)
-        fact_vary_rest = np.copy(factors)
-
-        # Use exact median values
         for t1 in list_j:
-            fact_vary_one[:, t1] = np.median(factors[:, t1]).astype(np.float64)
+            # Use exact midpoint instead of median to avoid floating-point errors
+            midpoint = (np.max(variables[:, t1]) + np.min(variables[:, t1])) / 2
+            fact_vary_one[:, t1] = midpoint
+
         for t2 in list_i:
-            fact_vary_rest[:, t2] = np.median(factors[:, t2]).astype(np.float64)
+            midpoint = (np.max(variables[:, t2]) + np.min(variables[:, t2])) / 2
+            fact_vary_rest[:, t2] = midpoint
 
         # Prepare outputs
-        data_sep_1 = np.empty((0, n_variables + 1), dtype=np.float64)
-        data_sep_2 = np.empty((0, n_variables + 1), dtype=np.float64)
+        data_sep_1 = []
+        data_sep_2 = []
 
-        # Compare with tolerance for floating point numbers
-        def float_equal(a, b, tol=1e-15):
-            return np.all(np.abs(a - b) < tol)
-
-        # Save first part with tolerance-based comparison
+        # Compare with a small tolerance (1e-12)
         for i in range(len(fact_vary_one)):
             ck1 = fact_vary_one[i]
-            for j in range(len(factors)):
-                ck2 = factors[j]
-                if float_equal(ck1, ck2):
-                    new_row = ogdata[j, :]
-                    data_sep_1 = np.vstack([data_sep_1, new_row])
+            for j in range(len(variables)):
+                ck2 = variables[j]
+                if np.allclose(ck1, ck2, rtol=1e-12, atol=1e-12):
+                    data_sep_1.append(ogdata[j, :])
                     break
 
+        data_sep_1 = np.array(data_sep_1, dtype=np.float64)
         data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
-        print('additive datasep1 prepared', data_sep_1)
+        print('Additive datasep1 prepared:', data_sep_1)
 
-        # Save second part with tolerance-based comparison
         for i in range(len(fact_vary_rest)):
             ck1 = fact_vary_rest[i]
-            for j in range(len(factors)):
-                ck2 = factors[j]
-                if float_equal(ck1, ck2):
-                    new_row = ogdata[j, :]
-                    data_sep_2 = np.vstack([data_sep_2, new_row])
+            for j in range(len(variables)):
+                ck2 = variables[j]
+                if np.allclose(ck1, ck2, rtol=1e-12, atol=1e-12):
+                    data_sep_2.append(ogdata[j, :])
                     break
 
+        data_sep_2 = np.array(data_sep_2, dtype=np.float64)
         data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
-        print('additive datasep2 prepared', data_sep_2)
+        print('Additive datasep2 prepared:', data_sep_2)
 
-        try:
-            os.makedirs("results/separable_add/", exist_ok=True)
-        except:
-            pass
-
+        # Save results
+        os.makedirs("results/separable_add/", exist_ok=True)
         str1 = filename + "-add_a"
         str2 = filename + "-add_b"
 
-        # Save with maximum precision
-        np.savetxt("results/separable_add/" + str1, data_sep_1, fmt='%.18e')
-        np.savetxt("results/separable_add/" + str2, data_sep_2, fmt='%.18e')
+        np.savetxt(
+            os.path.join("results/separable_add/", str1),
+            data_sep_1,
+            fmt='%.18e',  # Maximum precision
+        )
+        np.savetxt(
+            os.path.join("results/separable_add/", str2),
+            data_sep_2,
+            fmt='%.18e',
+        )
 
-        return ("results/separable_add/", str1, "results/separable_add/", str2)
+        return (
+            "results/separable_add/",
+            str1,
+            "results/separable_add/",
+            str2,
+        )
 
     except Exception as e:
         print("Error:", e)
