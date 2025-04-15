@@ -28,9 +28,9 @@ def load_exact_data(filepath, usecols):
         for line in f:
             if line.strip():  # Skip empty lines
                 parts = line.strip().split()
-                row = [Decimal(parts[i]) for i in usecols]
+                row = [float(parts[i]) for i in usecols]
                 data.append(row)
-    return np.array(data)
+    return np.array(data, dtype=np.float64)
             
 def do_separability_plus(pathdir, filename, list_i,list_j):
     np.set_printoptions(precision=20, suppress=False)
