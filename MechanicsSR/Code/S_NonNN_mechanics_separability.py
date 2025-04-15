@@ -78,7 +78,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                     break
 
         data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
-        data_sep_1 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_1])
+        data_sep_1 = np.array([[double(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_1])
         print('additive datasep1 prepared', data_sep_1)
 
         # Save second part
@@ -92,7 +92,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                     break
 
         data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
-        data_sep_2 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_2])
+        data_sep_2 = np.array([[double(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_2])
         print('additive datasep2 prepared', data_sep_2)
 
         try:
@@ -130,7 +130,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
                 v = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(j,), dtype=str)])
                 ogdata = np.column_stack((variables, v))  # original dataset in numpy form
 
-        print('check here ogdata', np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in variables]))
+        print('check here ogdata', np.array([[double(x) if isinstance(x, Decimal) else x for x in row] for row in variables]))
 
         f_dependent = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(n_variables,), dtype=str)])
         f_dependent = f_dependent.reshape((len(f_dependent), 1))
@@ -164,7 +164,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
                     break
 
         data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
-        data_sep_1 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_1])
+        data_sep_1 = np.array([[double(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_1])
         print('datasep1 prepared', data_sep_1)
 
         # Match fact_vary_rest rows with original factors
@@ -178,7 +178,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
                     break
 
         data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
-        data_sep_2 = np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_2])
+        data_sep_2 = np.array([[double(x) if isinstance(x, Decimal) else x for x in row] for row in data_sep_2])
         print('datasep2 prepared', data_sep_2)
 
         # Save results
