@@ -137,8 +137,10 @@ def check_separability_mul(pathdir, filename):
             if mse<=tolerance:
                 print('Multiplication separability found, er=',mse)
                 print('variable_idx = ', j)
-                min_error = mse
-                best_i = j
-                best_j = rest_indx
+                if mse < min_error:
+                    min_error = mse
+                    best_i = j
+                    best_j = rest_indx
+                print('best separation so far: i =', best_i ,'j =', best_j, 'error =', min_error)
                     
     return min_error, best_i, best_j
