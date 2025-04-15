@@ -49,6 +49,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         else:
             factors = factors
         factors = factors.double()
+        print(factors)
 
         product = torch.from_numpy(f_dependent)
         if is_cuda:
@@ -56,6 +57,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         else:
             product = product
         product = product.double()
+        print(product)
 
         #model.load_state_dict(torch.load(pathdir_weights+filename+".h5"))
         #model.eval()
