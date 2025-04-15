@@ -89,7 +89,8 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                 for j in range(len(factors)):
                     ck1=check_sub_1[i]
                     ck2=factors[j]
-#                    print('okhere',torch.equal(ck1,ck2))
+                    print(ck1, ck2)
+                    #print('okhere',torch.equal(ck1,ck2))
                     if (torch.equal(ck1,ck2)):
                         new_row= ogdata[j,:]
                         #print("original datapoint found",new_row)
@@ -105,6 +106,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                 for j in range(len(factors)):
                     ck1=check_sub_2[i]
                     ck2=factors[j]
+                    print(ck1, ck2)
                     #print('okhere',torch.equal(ck1,ck2))
                     if (torch.equal(ck1,ck2)):
                         new_row= ogdata[j,:]
