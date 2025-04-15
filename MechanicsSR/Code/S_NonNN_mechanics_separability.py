@@ -45,10 +45,10 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
 
         factors = variables.astype(np.float64) 
-        print(factors)
+        #print(factors)
 
         product = f_dependent.astype(np.float64)
-        print(product)
+        #print(product)
         
         fact_vary_one = np.copy(factors)
         fact_vary_rest = np.copy(factors)
