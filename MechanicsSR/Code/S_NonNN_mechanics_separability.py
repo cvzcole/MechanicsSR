@@ -23,236 +23,171 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
     try:
 
         # load the data
-        n_variables = np.loadtxt(pathdir+filename, dtype='str').shape[1]-1
-        variables = np.loadtxt(pathdir+filename, usecols=(0,))
+        fullpath = pathdir + filename
+        n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
+        variables = np.loadtxt(fullpath, usecols=(0,))
 
         if n_variables==1:
             print(filename, "just one variable for ADD")
             # if there is just one variable you have nothing to separate
             return (-1,-1,-1)
         else:
-            for j in range(1,n_variables):
-                v = np.loadtxt(pathdir+filename, usecols=(j,))
-                variables = np.column_stack((variables,v))
-            for j in range(1,n_variables+1):
-                v = np.loadtxt(pathdir+filename, usecols=(j,))
-                ogdata = np.column_stack((variables,v))  # original dataset in numpy form
+            for j in range(1, n_variables):
+                v = np.loadtxt(fullpath, usecols=(j,))
+                variables = np.column_stack((variables, v))
+            for j in range(1, n_variables + 1):
+                v = np.loadtxt(fullpath, usecols=(j,))
+                ogdata = np.column_stack((variables, v))
         
         print('check here ogdata',variables)
 
-        f_dependent = np.loadtxt(pathdir+filename, usecols=(n_variables,))
-        f_dependent = np.reshape(f_dependent,(len(f_dependent),1))
+        f_dependent = np.loadtxt(fullpath, usecols = (n_variables,))
+        f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
 
-        factors = torch.from_numpy(variables) 
-        if is_cuda:
-            factors = factors.cuda()
-        else:
-            factors = factors
-        factors = factors.double()
+        factors = variables.astype(np.float64) 
         print(factors)
 
-        product = torch.from_numpy(f_dependent)
-        if is_cuda:
-            product = product.cuda()
-        else:
-            product = product
-        product = product.double()
+        product = f_dependent.astype(np.float64)
         print(product)
-
-        #model.load_state_dict(torch.load(pathdir_weights+filename+".h5"))
-        #model.eval()
-
-        # make some variables at the time equal to the median of factors
         
-        fact_vary = factors.clone()
+        fact_vary_one = np.copy(factors)
+        fact_vary_rest = np.copy(factors)
 
-        
-        for k in range(len(factors[0])):
-            fact_vary[:,k] = torch.full((len(factors),),torch.median(factors[:,k]))
-        fact_vary_one = factors.clone()
-        fact_vary_rest = factors.clone()
         for t1 in list_j:
-            fact_vary_one[:,t1] = torch.full((len(factors),),torch.median(factors[:,t1]))
+            fact_vary_one[:, t1] = np.median(factors[:, t1])
         for t2 in list_i:
-            fact_vary_rest[:,t2] = torch.full((len(factors),),torch.median(factors[:,t2]))
-        np_fact_one = fact_vary_one.cpu().numpy() # transfer to numpy form
-        np_fact_rest = fact_vary_rest.cpu().numpy()   
-        data_sep_1 = np.empty((0,n_variables+1))
-        data_sep_2 = np.empty((0,n_variables+1))
-        with torch.no_grad():
-            str1 = filename+"-add_a"
-            str2 = filename+"-add_b"
-            # Save the first halfbool
-            check_sub_1 = fact_vary_one
+            fact_vary_rest[:, t2] = np.median(factors[:, t2])
 
-            for i in range(len(check_sub_1)):
-                for j in range(len(factors)):
-                    ck1=check_sub_1[i]
-                    ck2=factors[j]
-                    print(ck1, ck2)
-                    #print('okhere',torch.equal(ck1,ck2))
-                    if (torch.equal(ck1,ck2)):
-                        print('pass')
-                        new_row= ogdata[j,:]
-                        #print("original datapoint found",new_row)
-                        data_sep_1 = np.vstack([new_row,data_sep_1])
-                        #print('1added',ck1.unsqueeze(0))
-                        break
-            data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
-            print('addtive datasep1 prepared',data_sep_1)
-            # Save the second half
-            check_sub_2 = fact_vary_rest
+        # Prepare outputs
+        data_sep_1 = np.empty((0, n_variables + 1))
+        data_sep_2 = np.empty((0, n_variables + 1))
 
-            for i in range(len(check_sub_2)):
-                for j in range(len(factors)):
-                    ck1=check_sub_2[i]
-                    ck2=factors[j]
-                    print(ck1, ck2)
-                    #print('okhere',torch.equal(ck1,ck2))
-                    if (torch.equal(ck1,ck2)):
-                        print('pass')
-                        new_row= ogdata[j,:]
-                        #print("original datapoint found",new_row)
-                        data_sep_2 = np.vstack([new_row,data_sep_2])
-                        #print('1added',ck1.unsqueeze(0))
-                        break
-            data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
-            print('additive datasep2 prepared',data_sep_2)
-            try:
-                os.mkdir("results/separable_add/")
-            except:
-                pass
-            np.savetxt("results/separable_add/"+str1,data_sep_1)
-            np.savetxt("results/separable_add/"+str2,data_sep_2)
-            # if it is separable, return the 2 new files created and the index of the column with the separable variable
-            return ("results/separable_add/",str1,"results/separable_add/",str2)
+        # Save first part
+        for i in range(len(fact_vary_one)):
+            ck1 = fact_vary_one[i]
+            for j in range(len(factors)):
+                ck2 = factors[j]
+                if np.allclose(ck1, ck2, atol=1e-6):
+                    new_row = ogdata[j, :]
+                    data_sep_1 = np.vstack([data_sep_1, new_row])
+                    break
+
+        data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
+        print('additive datasep1 prepared', data_sep_1)
+
+        # Save second part
+        for i in range(len(fact_vary_rest)):
+            ck1 = fact_vary_rest[i]
+            for j in range(len(factors)):
+                ck2 = factors[j]
+                if np.allclose(ck1, ck2, atol=1e-6):
+                    new_row = ogdata[j, :]
+                    data_sep_2 = np.vstack([data_sep_2, new_row])
+                    break
+
+        data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
+        print('additive datasep2 prepared', data_sep_2)
+
+        try:
+            os.makedirs("results/separable_add/", exist_ok=True)
+        except:
+            pass
+
+        str1 = filename + "-add_a"
+        str2 = filename + "-add_b"
+
+        np.savetxt("results/separable_add/" + str1, data_sep_1)
+        np.savetxt("results/separable_add/" + str2, data_sep_2)
+
+        return ("results/separable_add/", str1, "results/separable_add/", str2)
 
     except Exception as e:
-        print(e)
-        return (-1,-1)
-                 
-                  
-def do_separability_multiply(pathdir, filename, list_i,list_j):
+        print("Error:", e)
+        return (-1, -1)
+    
+def do_separability_multiply(pathdir, filename, list_i, list_j):
     try:
-        # load the data
-        n_variables = np.loadtxt(pathdir+filename, dtype='str').shape[1]-1
-        variables = np.loadtxt(pathdir+filename, usecols=(0,))
-
-        if n_variables==1:
-            print(filename, "just one variable for ADD")
-            # if there is just one variable you have nothing to separate
-            return (-1,-1,-1)
+        # Load the data
+        full_path = pathdir + filename
+        n_variables = np.loadtxt(full_path, dtype='str').shape[1] - 1
+        variables = np.loadtxt(full_path, usecols=(0,))
+        
+        if n_variables == 1:
+            print(filename, "just one variable for MULT")
+            return (-1, -1, -1)
         else:
-            for j in range(1,n_variables):
-                v = np.loadtxt(pathdir+filename, usecols=(j,))
-                variables = np.column_stack((variables,v))
-            for j in range(1,n_variables+1):
-                v = np.loadtxt(pathdir+filename, usecols=(j,))
-                ogdata = np.column_stack((variables,v))  # original dataset in numpy form
-        
-        print('check here ogdata',variables)
-        
+            for j in range(1, n_variables):
+                v = np.loadtxt(full_path, usecols=(j,))
+                variables = np.column_stack((variables, v))
+            for j in range(1, n_variables + 1):
+                v = np.loadtxt(full_path, usecols=(j,))
+                ogdata = np.column_stack((variables, v))  # original dataset in numpy form
 
-        f_dependent = np.loadtxt(pathdir+filename, usecols=(n_variables,))
-        f_dependent = np.reshape(f_dependent,(len(f_dependent),1))  # original output in n*1 numpy array
+        print('check here ogdata', variables)
 
-        factors = torch.from_numpy(variables)  # factors are variables in tensor form
+        f_dependent = np.loadtxt(full_path, usecols=(n_variables,))
+        f_dependent = f_dependent.reshape((len(f_dependent), 1))
 
-        factors = factors.double()
+        factors = variables.astype(np.float64)
 
-        product = torch.from_numpy(f_dependent)
-
-        product = product.double()
-
-        # load the trained model and put it in evaluation mode
-
-        # make some variables at the time equal to the median of factors             
-        # Abang -- the following code use NN to predict the values
-        # ！！！ Abang -- I need to replace this part, and save the dataset into fact_vary_one and fact_vary_rest
-        # factors are variables only, form changed here: transfer variables (numpy) to factors(torch)
-        fact_vary = factors.clone()
-        for k in range(len(factors[0])):
-            fact_vary[:,k] = torch.full((len(factors),),torch.median(factors[:,k]))
-        # Abang --fact_vary is a tensor filled with all mean values
-        
-        fact_vary_one = factors.clone()  # replace only list_j columns to mean value
-        fact_vary_rest = factors.clone() # replace only list_i columns to mean value
-        np_fact_one = fact_vary_one.cpu().numpy() # transfer to numpy form
-        np_fact_rest = fact_vary_rest.cpu().numpy() 
-        #print('done',np_fact_one)
+        # Create modified versions of the factors
+        fact_vary_one = np.copy(factors)
+        fact_vary_rest = np.copy(factors)
 
         for t1 in list_j:
-            fact_vary_one[:,t1] = torch.full((len(factors),),torch.median(factors[:,t1]))
+            fact_vary_one[:, t1] = np.median(factors[:, t1])
         for t2 in list_i:
-            fact_vary_rest[:,t2] = torch.full((len(factors),),torch.median(factors[:,t2]))  
-        print('constants here',torch.median(factors[:,t1]),torch.median(factors[:,t2]))           
-        with torch.no_grad():
-            str1 = filename + "-mult_a"
-            str2 = filename + "-mult_b"
-        # Initialize empty arrays
-        data_sep_1 = np.empty((0,n_variables+1))
-        data_sep_2 = np.empty((0,n_variables+1))
-        with torch.no_grad():
-            str1 = filename + "-mult_a"
-            str2 = filename + "-mult_b"
+            fact_vary_rest[:, t2] = np.median(factors[:, t2])
 
-            # Save the first halfbool
-            check_sub_1 = fact_vary_one
+        print('constants here', [np.median(factors[:, t]) for t in list_j + list_i])
 
-            for i in range(len(check_sub_1)):
-                for j in range(len(factors)):
-                    ck1=check_sub_1[i]
-                    ck2=factors[j]
-                    #print('okhere',torch.equal(ck1,ck2))
-                    if (torch.equal(ck1,ck2)):
-                        new_row= ogdata[j,:]
-                        #print("original datapoint found",new_row)
-                        data_sep_1 = np.vstack([new_row,data_sep_1])
-                        #print('1added',ck1.unsqueeze(0))
-                        break
-            data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
-            print('datasep1 prepared',data_sep_1)
-#            print('data_sep_1',data_sep_1)
-            # Save the second half
+        # Initialize empty result arrays
+        data_sep_1 = np.empty((0, n_variables + 1))
+        data_sep_2 = np.empty((0, n_variables + 1))
 
-            # Save the first halfbool
-            check_sub_2 = fact_vary_rest
+        # Match fact_vary_one rows with original factors
+        for i in range(len(fact_vary_one)):
+            ck1 = fact_vary_one[i]
+            for j in range(len(factors)):
+                ck2 = factors[j]
+                if np.allclose(ck1, ck2, atol=1e-6):
+                    new_row = ogdata[j, :]
+                    data_sep_1 = np.vstack([data_sep_1, new_row])
+                    break
 
-            for i in range(len(check_sub_2)):
-                for j in range(len(factors)):
-                    ck1=check_sub_2[i]
-                    ck2=factors[j]
-                    #print('okhere',torch.equal(ck1,ck2))
-                    if (torch.equal(ck1,ck2)):
-                        new_row= ogdata[j,:]
-                        #print("original datapoint found",new_row)
-                        data_sep_2 = np.vstack([new_row,data_sep_2])
-                        #print('1added',ck1.unsqueeze(0))
-                        break
-            data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
-            print('datasep2 prepared',data_sep_2)
-                    
+        data_sep_1 = np.delete(data_sep_1, list_j, axis=1)
+        print('datasep1 prepared', data_sep_1)
 
-#Abang -- I need to change the last column too
-# insert searching algorithm or .where here!            
-#            data_sep_1 = np.column_stack((data_sep_1,model(fact_vary_one).cpu()))
-            # save the second half  
-#            data_sep_2 = variables
-#            data_sep_2 = np.delete(data_sep_2,list_i,axis=1)
-#            data_sep_2 = np.column_stack((data_sep_2,model(fact_vary_rest).cpu()/model(fact_vary).cpu()))
-            try:
-                os.mkdir("results/separable_mult/")
-            except:
-                pass
-            np.savetxt("results/separable_mult/"+str1,data_sep_1)
-            np.savetxt("results/separable_mult/"+str2,data_sep_2)
-            # if it is separable, return the 2 new files created and the index of the column with the separable variable
-            return ("results/separable_mult/",str1,"results/separable_mult/",str2)
+        # Match fact_vary_rest rows with original factors
+        for i in range(len(fact_vary_rest)):
+            ck1 = fact_vary_rest[i]
+            for j in range(len(factors)):
+                ck2 = factors[j]
+                if np.allclose(ck1, ck2, atol=1e-6):
+                    new_row = ogdata[j, :]
+                    data_sep_2 = np.vstack([data_sep_2, new_row])
+                    break
+
+        data_sep_2 = np.delete(data_sep_2, list_i, axis=1)
+        print('datasep2 prepared', data_sep_2)
+
+        # Save results
+        try:
+            os.makedirs("results/separable_mult/", exist_ok=True)
+        except:
+            pass
+
+        str1 = filename + "-mult_a"
+        str2 = filename + "-mult_b"
+
+        np.savetxt("results/separable_mult/" + str1, data_sep_1)
+        np.savetxt("results/separable_mult/" + str2, data_sep_2)
+
+        return ("results/separable_mult/", str1, "results/separable_mult/", str2)
 
     except Exception as e:
-        print(e)
-        return (-1,-1)
-
+        print("Error:", e)
+        return (-1, -1)
 
 
 '''
