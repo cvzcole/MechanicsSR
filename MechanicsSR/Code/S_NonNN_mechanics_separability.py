@@ -1,5 +1,5 @@
 from __future__ import print_function
-from decimal import Decimal
+from decimal import Decimal, getcontext
 import torch
 import os
 import torch.optim as optim
