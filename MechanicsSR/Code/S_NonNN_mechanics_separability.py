@@ -92,6 +92,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                     print(ck1, ck2)
                     #print('okhere',torch.equal(ck1,ck2))
                     if (torch.equal(ck1,ck2)):
+                        print('pass')
                         new_row= ogdata[j,:]
                         #print("original datapoint found",new_row)
                         data_sep_1 = np.vstack([new_row,data_sep_1])
@@ -109,6 +110,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                     print(ck1, ck2)
                     #print('okhere',torch.equal(ck1,ck2))
                     if (torch.equal(ck1,ck2)):
+                        print('pass')
                         new_row= ogdata[j,:]
                         #print("original datapoint found",new_row)
                         data_sep_2 = np.vstack([new_row,data_sep_2])
