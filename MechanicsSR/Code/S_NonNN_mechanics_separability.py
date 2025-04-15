@@ -44,7 +44,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
                 v = np.array([Decimal(x) for x in np.loadtxt(pathdir + filename, usecols=(j,), dtype=str)])
                 ogdata = np.column_stack((variables, v))
         
-        print('check here ogdata', variables]))
+        print('check here ogdata', variables)
 
         f_dependent = np.loadtxt(fullpath, usecols = (n_variables,))
         f_dependent = np.reshape(f_dependent, (len(f_dependent), 1))
@@ -130,7 +130,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
                 v = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(j,), dtype=str)])
                 ogdata = np.column_stack((variables, v))  # original dataset in numpy form
 
-        print('check here ogdata', np.array([[np.double(x) if isinstance(x, Decimal) else x for x in row] for row in variables]))
+        print('check here ogdata', variables)
 
         f_dependent = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(n_variables,), dtype=str)])
         f_dependent = f_dependent.reshape((len(f_dependent), 1))
