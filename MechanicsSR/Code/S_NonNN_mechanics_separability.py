@@ -22,28 +22,15 @@ def rmse_loss(pred, targ):
 
 is_cuda = torch.cuda.is_available()
 
-def load_exact_data(filepath, usecols):
-    """Load data without intermediate float conversions."""
-    data = []
-    with open(filepath, 'r') as f:
-        for line in f:
-            if line.strip():  # Skip empty lines
-                parts = line.strip().split()
-                row = [parts[i]for i in (usecols if usecols is not None else range(len(parts)))]
-                data.append(row)
-    return np.array(data, dtype=np.float64)  # Ensure float64 precision
-
 def do_separability_plus(pathdir, filename, list_i,list_j):
     np.set_printoptions(precision=20, suppress=False)
-
-
     try:
         # load the data
         fullpath = pathdir + filename
-        n_variables = load_exact_data(fullpath, None).shape[1] - 1
+        n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
         print("number of variables =", n_variables)
         
-        variables = load_exact_data(fullpath, (0,))
+        variables = np.loadtxt(fullpath, usecols = (0,))
 
         if n_variables==1:
             print(filename, "just one variable for ADD")
@@ -51,10 +38,10 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
             return (-1,-1,-1)
         else:
             for j in range(1, n_variables):
-                v = load_exact_data(fullpath, (j,))
+                v = np.loadtxt(fullpath, usecols = (j,))
                 variables = np.column_stack((variables, v))
             for j in range(1, n_variables + 1):
-                v = load_exact_data(fullpath, (j,))
+                v = np.loadtxt(fullpath, usecols = (j,))
                 ogdata = np.column_stack((variables, v))
 
         print('check here ogdata', variables)
@@ -118,9 +105,8 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         str2 = filename + "-add_b"
         str3 = filename + "-og"
 
-        np.savetxt("results/separable_add/" + str1, data_sep_1)
-        np.savetxt("results/separable_add/" + str2, data_sep_2)
-        np.savetxt("results/separable_add/" + str3, variables)
+        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
 
         return ("results/separable_add/", str1, "results/separable_add/", str2)
     except Exception as e:
@@ -132,7 +118,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
         # load the data
         fullpath = pathdir + filename
         n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
-        variables = load_exact_data(fullpath, (0,))
+        variables = np.loadtxt(fullpath, usecols = (0,))
 
         if n_variables==1:
             print(filename, "just one variable for ADD")
@@ -140,15 +126,15 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
             return (-1,-1,-1)
         else:
             for j in range(1, n_variables):
-                v = load_exact_data(fullpath, (j,))
+                v = np.loadtxt(fullpath, usecols = (j,))
                 variables = np.column_stack((variables, v))
             for j in range(1, n_variables + 1):
-                v = load_exact_data(fullpath, (j,))
+                v = np.loadtxt(fullpath, usecols = (j,))
                 ogdata = np.column_stack((variables, v))
 
         print('check here ogdata', np.array([[float(x) if isinstance(x, Decimal) else x for x in row] for row in variables]))
 
-        f_dependent = np.array([Decimal(x) for x in np.loadtxt(fullpath, usecols=(n_variables,), dtype=str)])
+        f_dependent = np.loadtxt(fullpath, usecols = (n_variables,))
         f_dependent = f_dependent.reshape((len(f_dependent), 1))
 
         factors = variables.astype(np.double)
@@ -206,8 +192,8 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
         str1 = filename + "-mult_a"
         str2 = filename + "-mult_b"
 
-        np.savetxt("results/separable_mult/" + str1, data_sep_1)
-        np.savetxt("results/separable_mult/" + str2, data_sep_2)
+        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
 
         return ("results/separable_mult/", str1, "results/separable_mult/", str2)
 
