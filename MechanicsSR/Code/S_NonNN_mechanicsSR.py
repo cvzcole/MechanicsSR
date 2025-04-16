@@ -25,6 +25,11 @@ from S_final_gd import final_gd
 from S_add_bf_on_numbers_on_pareto import add_bf_on_numbers_on_pareto
 from dimensionalAnalysis import dimensionalAnalysis
 
+def turn2list(value):
+    if isinstance(value, tuple) and len(value) == 1: #and isinstance(value[0], np.int64):
+        return [value]
+    return value
+    
 PA = ParetoSet()
 def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", polyfit_deg=3, PA=PA):
     try:
@@ -70,7 +75,7 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
     # Apply the best separability and rerun the main function on this new file    
     if idx_min == 0:
         print("Additive Separability Found")
-        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_plus(pathdir, filename, [separability_plus_result[1]], separability_plus_result[2])
+        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_plus(pathdir, filename, turn2list(separability_plus_result[1]), turn2list(separability_plus_result[2]))
         PA1_ = ParetoSet()
         PA1 = run_modelfree_sr(new_pathdir1,new_filename1,BF_try_time,BF_ops_file_type, polyfit_deg, PA1_)
         PA2_ = ParetoSet()
@@ -81,7 +86,7 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
     
     elif idx_min == 1:
         print("Multiplicative Separability Found")
-        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_multiply(pathdir, filename, [separability_multiply_result[1]], separability_multiply_result[2])
+        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_multiply(pathdir, filename, turn2list(separability_multiply_result[1]), turn2list(separability_multiply_result[2]))
         PA1_ = ParetoSet()
         PA1 = run_modelfree_sr(new_pathdir1,new_filename1,BF_try_time,BF_ops_file_type, polyfit_deg, PA1_)
         PA2_ = ParetoSet()
