@@ -70,7 +70,7 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
     # Apply the best separability and rerun the main function on this new file    
     if idx_min == 0:
         print("Additive Separability Found")
-        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_plus(pathdir,filename,separability_plus_result[1],separability_plus_result[2])
+        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_plus(pathdir, filename, [separability_plus_result[1]], separability_plus_result[2])
         PA1_ = ParetoSet()
         PA1 = run_modelfree_sr(new_pathdir1,new_filename1,BF_try_time,BF_ops_file_type, polyfit_deg, PA1_)
         PA2_ = ParetoSet()
@@ -81,7 +81,7 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
     
     elif idx_min == 1:
         print("Multiplicative Separability Found")
-        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_multiply(pathdir,filename,separability_multiply_result[1],separability_multiply_result[2])
+        new_pathdir1, new_filename1, new_pathdir2, new_filename2,  = do_separability_multiply(pathdir, filename, [separability_multiply_result[1]], separability_multiply_result[2])
         PA1_ = ParetoSet()
         PA1 = run_modelfree_sr(new_pathdir1,new_filename1,BF_try_time,BF_ops_file_type, polyfit_deg, PA1_)
         PA2_ = ParetoSet()
