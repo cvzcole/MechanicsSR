@@ -119,7 +119,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
 
         np.savetxt("results/separable_add/" + str1, data_sep_1)
         np.savetxt("results/separable_add/" + str2, data_sep_2)
-        np.savetxt("results/separable_add/" + ogdata.txt)
+        np.savetxt("results/separable_add/" + ogdata.txt, ogdata)
 
         return ("results/separable_add/", str1, "results/separable_add/", str2)
     except Exception as e:
