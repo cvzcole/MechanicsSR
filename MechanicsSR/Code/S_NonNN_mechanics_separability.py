@@ -29,7 +29,7 @@ def load_exact_data(filepath, usecols):
         for line in f:
             if line.strip():  # Skip empty lines
                 parts = line.strip().split()
-                row = [parts[i]]
+                row = [parts[i]for i in (usecols if usecols is not None else range(len(parts)))]
                 data.append(row)
     return np.array(data, dtype=np.float64)  # Ensure float64 precision
 
