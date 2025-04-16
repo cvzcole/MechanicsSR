@@ -116,10 +116,11 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         
         str1 = filename + "-add_a"
         str2 = filename + "-add_b"
+        str3 = filename + "-og"
 
         np.savetxt("results/separable_add/" + str1, data_sep_1)
         np.savetxt("results/separable_add/" + str2, data_sep_2)
-        np.savetxt("results/separable_add/" + ogdata.txt, ogdata)
+        np.savetxt("results/separable_add/" + str3, variables)
 
         return ("results/separable_add/", str1, "results/separable_add/", str2)
     except Exception as e:
