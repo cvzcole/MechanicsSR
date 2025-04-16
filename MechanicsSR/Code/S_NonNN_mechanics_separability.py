@@ -40,7 +40,7 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
     try:
         # load the data
         fullpath = pathdir + filename
-        n_variables = load_exact_data(fullpath).shape[1] - 1
+        n_variables = load_exact_data(fullpath, None).shape[1] - 1
         print("number of variables =", n_variables)
         
         variables = load_exact_data(fullpath, (0,))
