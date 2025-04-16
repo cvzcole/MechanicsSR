@@ -29,7 +29,7 @@ def load_exact_data(filepath, usecols):
         for line in f:
             if line.strip():  # Skip empty lines
                 parts = line.strip().split()
-                row = [float(parts[i]) for i in usecols]  # Convert directly to float
+                row = [parts[i]]
                 data.append(row)
     return np.array(data, dtype=np.float64)  # Ensure float64 precision
 
@@ -40,7 +40,9 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
     try:
         # load the data
         fullpath = pathdir + filename
-        n_variables = np.loadtxt(fullpath, dtype='str').shape[1] - 1
+        n_variables = load_exact_data(fullpath).shape[1] - 1
+        print("number of variables =", n_variables)
+        
         variables = load_exact_data(fullpath, (0,))
 
         if n_variables==1:
