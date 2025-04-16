@@ -105,8 +105,8 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
         str2 = filename + "-add_b"
         str3 = filename + "-og"
 
-        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
-        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+        np.savetxt("results/separable_add/" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+        np.savetxt("results/separable_add/" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
 
         return ("results/separable_add/", str1, "results/separable_add/", str2)
     except Exception as e:
@@ -192,8 +192,8 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
         str1 = filename + "-mult_a"
         str2 = filename + "-mult_b"
 
-        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
-        np.savetxt("C:\\Users\\czachry3\\Downloads\\Research\\SR\\" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+        np.savetxt("results/separable_mult/" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+        np.savetxt("results/separable_mult/" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
 
         return ("results/separable_mult/", str1, "results/separable_mult/", str2)
 
