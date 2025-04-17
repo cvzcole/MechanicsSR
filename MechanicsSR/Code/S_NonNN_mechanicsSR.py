@@ -26,7 +26,7 @@ from S_add_bf_on_numbers_on_pareto import add_bf_on_numbers_on_pareto
 from dimensionalAnalysis import dimensionalAnalysis
 
 def turn2list(value):
-    if isinstance(value, tuple) and len(value) == 1 or isinstance(value, int):
+    if isinstance(value, tuple) or isinstance(value, int):
         return [value]
     return value
     
