@@ -46,7 +46,7 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
 #############################################################################################################################  
     # If less than 2 variable then no separability
     if len(data[0])<3:
-        print("Just one variable! && return results",filename)
+        print("Beginning Symbolic Regression on Fully Separated Dataset",filename)
         idx_min = -1
         # Run bf and polyfit
         PA = run_bf_polyfit(pathdir,pathdir,filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
@@ -82,7 +82,8 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
             multsep = False
 
         if addsep == False and multsep == False:
-            print('This dataset is no longer separable:', filename)
+            print('This Dataset is Fully Separated:', filename)
+            print("Beginning Symbolic Regression on Fully Separated Dataset",filename)
             idx_min = -1
             # Run bf and polyfit
             PA = run_bf_polyfit(pathdir,pathdir,filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
