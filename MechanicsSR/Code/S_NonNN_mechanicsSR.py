@@ -26,9 +26,12 @@ from S_add_bf_on_numbers_on_pareto import add_bf_on_numbers_on_pareto
 from dimensionalAnalysis import dimensionalAnalysis
 
 def turn2list(value):
-    if isinstance(value, tuple) or isinstance(value, int):
+    if isinstance(value, tuple):
+        return list(value)
+    elif isinstance(value, int):
         return [value]
-    return value
+    elif isinstance(value, list):
+        return value
     
 PA = ParetoSet()
 def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", polyfit_deg=3, PA=PA):
