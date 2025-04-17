@@ -143,9 +143,10 @@ def check_separability_plus(pathdir, filename):
                     if t3_found ==1:
                         break
             if er_idx > 0:
-                print('er_idx=',er_idx)
-                mse= Er_add / er_idx
-                                # if error is above tolerance then quit
+                #print('er_idx=',er_idx)
+                mse = Er_add / er_idx
+            
+            # if error is above tolerance then quit
             if mse>tolerance:
                 print('no additive separability Er_total=',mse)
                 return 99999,j,rest_indx
