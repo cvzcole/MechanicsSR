@@ -63,14 +63,42 @@ def run_modelfree_sr(pathdir,filename,BF_try_time=60,BF_ops_file_type="14ops", p
 
     # Separabilities
     else:
+        addsep = True
         separability_plus_result = check_separability_plus(pathdir,filename)
+        if separability_plus_result[0] == 99999:
+            print('No additive separability found for:', filename)
+            addsep = False
+        
     # Check here
 
-        print('check error here')
+        #print('check error here')
+        multsep = True
         separability_multiply_result = check_separability_mul(pathdir,filename)
+        if separability_multiply_result[0] == 99999:
+            print('No multiplicative separability found for:', filename)
+            multsep = False
 
-        idx_min = np.argmin(np.array([separability_plus_result[0], separability_multiply_result[0]]))
-        print ('idx_min', idx_min)
+        if addsep == False and multsep == False:
+            print('This dataset is no longer separable:', filename)
+            idx_min = -1
+            # Run bf and polyfit
+            PA = run_bf_polyfit(pathdir,pathdir,filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+        
+            # Run bf and polyfit on modified output
+            PA = get_acos(pathdir,"results/mystery_world_acos/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_asin(pathdir,"results/mystery_world_asin/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_atan(pathdir,"results/mystery_world_atan/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_cos(pathdir,"results/mystery_world_cos/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_exp(pathdir,"results/mystery_world_exp/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_inverse(pathdir,"results/mystery_world_inverse/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_log(pathdir,"results/mystery_world_log/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_sin(pathdir,"results/mystery_world_sin/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_sqrt(pathdir,"results/mystery_world_sqrt/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_squared(pathdir,"results/mystery_world_squared/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg)
+            PA = get_tan(pathdir,"results/mystery_world_tan/",filename,BF_try_time,BF_ops_file_type, PA, polyfit_deg) 
+        else:        
+            idx_min = np.argmin(np.array([separability_plus_result[0], separability_multiply_result[0]]))
+            print ('idx_min', idx_min)
         
     # Apply the best separability and rerun the main function on this new file    
     if idx_min == 0:
