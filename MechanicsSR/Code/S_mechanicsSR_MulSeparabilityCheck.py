@@ -129,7 +129,8 @@ def check_separability_mul(pathdir, filename):
             if er_idx > 0:
                 #print('er_idx=',er_idx)
                 mse= Er_mul / er_idx
-                                # if error is above tolerance then quit
+            
+            # if error is above tolerance then quit
             if mse>tolerance:
                 print('no multiplication separability Er_total=',mse)
                 return 99999,j,rest_indx
