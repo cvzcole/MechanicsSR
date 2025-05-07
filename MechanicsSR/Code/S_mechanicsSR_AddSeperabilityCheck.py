@@ -13,7 +13,7 @@ import time
 import math
 
 def check_separability_plus(pathdir, filename):
-    print("\n Start to check additional separability \n")
+    print("\n", "Start to check additional separability \n")
     # separability tolerance (hyperparameter)
     tolerance = 0.05
     # compare first 4 digits
@@ -50,7 +50,7 @@ def check_separability_plus(pathdir, filename):
     matching_rows = np.where(np.all(np.isclose(variables, fact_mean, atol=digits_tolerance),axis=1))[0]
     row_idx = matching_rows[0]
     fact_constant = ogdata[row_idx,-1]
-    print("Separation constant =",fact_constant, "\n")
+    print("Separation constant =", fact_constant, "\n")
     #print('variables',variables)
     #print('row_idx=, function_constant = ', row_idx,fact_constant)
     # loop through all indices combinations
@@ -158,6 +158,6 @@ def check_separability_plus(pathdir, filename):
                     min_error = mse
                     best_i = j
                     best_j = rest_indx
-                print("\n Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
+                print("\n", "Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
                     
     return min_error, best_i, best_j
