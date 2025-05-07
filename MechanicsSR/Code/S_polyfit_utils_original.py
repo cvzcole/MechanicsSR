@@ -52,7 +52,7 @@ def getBest(xs, y, max_deg):
     for i in range(0, max_deg + 1):
         result = multipolyfit(xs, y, i)
         results.append(result)  # Keep results as a list of tuples
-        print(result)
+        #print(result)
 
     # Extract errors from the result tuples
     errors = [res[1] for res in results]
