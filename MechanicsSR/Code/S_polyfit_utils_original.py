@@ -47,15 +47,21 @@ def multipolyfit(xs, y, deg):
     return (params, rms)
 
 
-def getBest(xs,y,max_deg):
+def getBest(xs, y, max_deg):
     results = []
-    for i in range(0,max_deg+1):
-        results = results + [multipolyfit(xs,y,i)]
-        print(results)
-    results = np.array(results)
-    # get the parameters and error of the fit with the lowest rms error
-    params = results[np.argmin(results[:,1:])][0]
-    error = results[np.argmin(results[:,1:])][1]
-    deg = np.argmin(results[:,1:])
-    return (params, error, deg)
+    for i in range(0, max_deg + 1):
+        result = multipolyfit(xs, y, i)
+        results.append(result)  # Keep results as a list of tuples
+        print(result)
 
+    # Extract errors from the result tuples
+    errors = [res[1] for res in results]
+
+    # Index of the model with the lowest RMS error
+    best_index = np.argmin(errors)
+
+    # Unpack the best model
+    params, error = results[best_index]
+    deg = best_index
+
+    return (params, error, deg)
