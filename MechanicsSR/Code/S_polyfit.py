@@ -1,7 +1,7 @@
 import numpy as np
 import os
-from S_polyfit_utils import getBest
-from S_polyfit_utils import basis_vector
+from S_polyfit_utils_original import getBest
+from S_polyfit_utils_original import basis_vector
 import itertools
 import sys
 import csv
