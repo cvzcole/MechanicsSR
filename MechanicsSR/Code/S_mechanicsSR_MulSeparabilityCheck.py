@@ -142,6 +142,6 @@ def check_separability_mul(pathdir, filename):
                     min_error = mse
                     best_i = j
                     best_j = rest_indx
-                print('best separation so far: i =', best_i ,'j =', best_j, 'error =', min_error)
+                print("\n Best multiplicativity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
                     
     return min_error, best_i, best_j
