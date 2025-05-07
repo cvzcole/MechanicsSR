@@ -18,7 +18,7 @@ import math
 def check_separability_mul(pathdir, filename):
     # separability tolerance (hyperparameter)
     tolerance = 0.05
-    print("\n Start to check multiplication separability \n")
+    print("\n", "Start to check multiplication separability \n")
     # compare first 4 digits
     digits_tolerance = 1e-5
     # load the data
@@ -142,6 +142,6 @@ def check_separability_mul(pathdir, filename):
                     min_error = mse
                     best_i = j
                     best_j = rest_indx
-                print("\n Best multiplicativity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
+                print("\n", "Best multiplicativity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
                     
     return min_error, best_i, best_j
