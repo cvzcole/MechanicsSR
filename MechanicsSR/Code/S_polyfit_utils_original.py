@@ -6,6 +6,11 @@ from scipy.sparse.linalg import lsqr
 import os
 from sympy import symbols, Add, Mul, S
 
+def predict(xs, params, powers):
+    return sum(p * (xs ** power).prod(axis=1) for p, power in zip(params, powers))
+
+def compute_mse(y_true, y_pred):
+    return np.mean((y_true - y_pred) ** 2)
 
 def basis_vector(n, i):
     x = zeros(n, dtype=int)
