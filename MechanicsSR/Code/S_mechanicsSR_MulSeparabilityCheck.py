@@ -18,7 +18,7 @@ import math
 def check_separability_mul(pathdir, filename):
     # separability tolerance (hyperparameter)
     tolerance = 0.05
-    print('start to check multiplication separability')
+    print("\n Start to check multiplication separability \n")
     # compare first 4 digits
     digits_tolerance = 1e-5
     # load the data
@@ -27,7 +27,7 @@ def check_separability_mul(pathdir, filename):
     ogdata = np.loadtxt(pathdir+filename)
 
     if n_variables==1:
-        print(filename, "just one variable for mul")
+        print(filename, "just one variable for MULT")
         # if there is just one variable you have nothing to separate
         return (-1,-1,-1)
     else:
@@ -52,7 +52,7 @@ def check_separability_mul(pathdir, filename):
     matching_rows = np.where(np.all(np.isclose(variables, fact_mean, atol=digits_tolerance),axis=1))[0]
     row_idx = matching_rows[0]
     fact_constant = ogdata[row_idx,-1]
-    print('constant=',fact_constant)
+    print("Separation constant =", fact_constant, "\n")
     var_indices_list = np.arange(0,n_variables,1)
     min_error = 1000
     best_i = []
