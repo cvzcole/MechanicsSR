@@ -183,7 +183,7 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
         try:
             polyfit_result = polyfit(polyfit_deg, pathdir_transformed+filename)
             eqn = str(polyfit_result[0])
-            print('polyfit_result',eqn)
+            print("Polyfit result: \n", eqn, "\n")
             # Calculate the complexity of the polyfit expression the same way as for gradient descent case
             if output_type=="":
                 eqn = eqn
@@ -236,7 +236,7 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
         
         except:
             pass
-
+        print("Brute Force Result:")
         print("Complexity  RMSE  Expression")
         for pareto_i in range(len(PA.get_pareto_points())):
             print(PA.get_pareto_points()[pareto_i])
