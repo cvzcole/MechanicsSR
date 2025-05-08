@@ -183,7 +183,7 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
         try:
             polyfit_result = polyfit(polyfit_deg, pathdir_transformed+filename)
             eqn = str(polyfit_result[0])
-            print("Polyfit result: \n", eqn, "\n")
+            
             # Calculate the complexity of the polyfit expression the same way as for gradient descent case
             if output_type=="":
                 eqn = eqn
@@ -209,7 +209,8 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
                 eqn = "sqrt(" + eqn + ")"
             elif output_type=="tan":
                 eqn = "atan(" + eqn + ")"
-            
+            print("Polyfit result: Error Equation")
+            print(polyfit_err, eqn, "\n")
             polyfit_err = get_symbolic_expr_error(input_data,eqn)
             expr = parse_expr(eqn)
             is_atomic_number = lambda expr: expr.is_Atom and expr.is_number
