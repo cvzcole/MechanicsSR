@@ -167,6 +167,7 @@ def check_separability_plus(pathdir, filename):
                     min_error = mse
                     best_i = turn2list(j)
                     best_j = turn2list(rest_indx)
-                print("\n", "Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
+                print(" ")
+                print("Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
                     
     return min_error, best_i, best_j
