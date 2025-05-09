@@ -152,6 +152,6 @@ def check_separability_mul(pathdir, filename):
                     best_i = turn2list(j)
                     best_j = turn2list(rest_indx)
                 print(" ")
-                print("Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
+                print("Best multiplicativity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
                     
     return min_error, best_i, best_j
