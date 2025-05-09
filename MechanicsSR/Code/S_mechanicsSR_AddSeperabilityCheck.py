@@ -12,8 +12,17 @@ from itertools import combinations
 import time
 import math
 
+def turn2list(value):
+    if isinstance(value, tuple):
+        return list(value)
+    elif isinstance(value, int):
+        return [value]
+    elif isinstance(value, list):
+        return value
+
 def check_separability_plus(pathdir, filename):
-    print("\n", "Start to check additional separability \n")
+    print(" ")
+    print("Start to check additional separability \n")
     # separability tolerance (hyperparameter)
     tolerance = 0.05
     # compare first 4 digits
@@ -62,12 +71,12 @@ def check_separability_plus(pathdir, filename):
     for i in range(1,n_variables):
         c = combinations(var_indices_list, i)
         for j in c:
-            print('Now check ith variable_add , idx =',j)
             x_bary_idx=[]
             x_bary_result=[]
             fact_vary_one = factors.clone()
             fact_vary_rest = factors.clone()
             rest_indx = list(filter(lambda x: x not in j, var_indices_list))
+            print('Now check i =', turn2list(j), 'j =', turn2list(rest_indx))
             for t1 in rest_indx:
                 xy_bar_result=[]
                 fact_vary_one[:,t1] = torch.full((len(factors),),torch.median(factors[:,t1]))
@@ -156,8 +165,8 @@ def check_separability_plus(pathdir, filename):
                 print('variable_idx = ', j)
                 if mse < min_error:
                     min_error = mse
-                    best_i = j
-                    best_j = rest_indx
+                    best_i = turn2list(j)
+                    best_j = turn2list(rest_indx)
                 print("\n", "Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
                     
     return min_error, best_i, best_j
