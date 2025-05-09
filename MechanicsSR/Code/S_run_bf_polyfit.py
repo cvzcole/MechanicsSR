@@ -210,8 +210,9 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
             elif output_type=="tan":
                 eqn = "atan(" + eqn + ")"
             print("Polyfit result: Error Equation")
-            print(polyfit_err, eqn, "\n")
+            
             polyfit_err = get_symbolic_expr_error(input_data,eqn)
+            print(polyfit_err, eqn, "\n")
             expr = parse_expr(eqn)
             is_atomic_number = lambda expr: expr.is_Atom and expr.is_number
             numbers_expr = [subexpression for subexpression in preorder_traversal(expr) if is_atomic_number(subexpression)]
