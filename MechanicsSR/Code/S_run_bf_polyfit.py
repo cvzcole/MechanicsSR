@@ -22,6 +22,7 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
 #############################################################################################################################
     if np.isnan(input_data).any()==False:
         # run BF on the data (+)
+        print(" ")
         print("Checking for brute force + \n")
         brute_force(pathdir_transformed,filename,BF_try_time,BF_ops_file_type,"+")
         
@@ -209,10 +210,9 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
                 eqn = "sqrt(" + eqn + ")"
             elif output_type=="tan":
                 eqn = "atan(" + eqn + ")"
-            print("Polyfit result: Error Equation")
             
             polyfit_err = get_symbolic_expr_error(input_data,eqn)
-            print(polyfit_err, eqn, "\n")
+            print(str(polyfit_err) + ", " + str(eqn), "\n")
             expr = parse_expr(eqn)
             is_atomic_number = lambda expr: expr.is_Atom and expr.is_number
             numbers_expr = [subexpression for subexpression in preorder_traversal(expr) if is_atomic_number(subexpression)]
@@ -227,7 +227,10 @@ def run_bf_polyfit(pathdir,pathdir_transformed,filename,BF_try_time,BF_ops_file_
                     complexity = complexity + (n_variables+n_operations)*np.log2((n_variables+n_operations))
             except:
                 pass
-
+            print("Polyfit result:")
+            print("Complexity  RMSE  Expression")
+            print("[" + str(complexity) + ", " + str(polyfit_err) + ", " + str(eqn) + "]")
+            print(" ")
             #run zero snap on polyfit output
             PA_poly = ParetoSet()
             PA_poly.add(Point(x=complexity, y=polyfit_err, data=str(eqn)))
