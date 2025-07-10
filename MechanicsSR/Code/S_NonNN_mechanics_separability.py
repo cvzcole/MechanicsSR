@@ -174,7 +174,7 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
             ck1 = fact_vary_rest[i]
             for j in range(len(factors)):
                 ck2 = factors[j]
-                if np.all(ck1 == ck2):
+                if np.allclose(ck1, ck2, rtol=1e-8, atol=1e-8):
                     new_row = ogdata[j, :]
                     data_sep_2 = np.vstack([data_sep_2, new_row])
                     break
