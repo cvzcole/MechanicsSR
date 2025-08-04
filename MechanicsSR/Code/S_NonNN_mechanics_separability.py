@@ -13,6 +13,8 @@ from matplotlib import pyplot as plt
 from itertools import combinations
 import time
 
+
+
 is_cuda = torch.cuda.is_available()
 
 def rmse_loss(pred, targ):
@@ -96,8 +98,11 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
        
         print('additive datasep2 prepared', data_sep_2)
 
+        drivedir = "/content/drive/My Drive/ColabFiles/seperable_add"
+        
         try:
             os.makedirs("results/separable_add/", exist_ok=True)
+            os.makedirs(drivedir, exist_ok=True)
         except:
             pass
         
@@ -107,6 +112,9 @@ def do_separability_plus(pathdir, filename, list_i,list_j):
 
         np.savetxt("results/separable_add/" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
         np.savetxt("results/separable_add/" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+
+        shutil.copy("results/separable_add/" + str1, drivedir + str1)
+        shutil.copy("results/separable_add/" + str2, drivedir + str2)
 
         return ("results/separable_add/", str1, "results/separable_add/", str2)
     except Exception as e:
@@ -185,9 +193,12 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
         #data_sep_2 = np.array([[np.double(x) for x in row] for row in data_sep_2])
         print('datasep2 prepared', data_sep_2)
 
+        drivedir = "/content/drive/My Drive/ColabFiles/seperable_mult"
+        
         # Save results
         try:
             os.makedirs("results/separable_mult/", exist_ok=True)
+            os.makedirs("drivedir", exist_ok=True)
         except:
             pass
 
@@ -196,6 +207,9 @@ def do_separability_multiply(pathdir, filename, list_i, list_j):
 
         np.savetxt("results/separable_mult/" + str1, np.round(data_sep_1, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
         np.savetxt("results/separable_mult/" + str2, np.round(data_sep_2, 5), fmt="%.5f", delimiter=" ", newline="\n", encoding="utf-8")
+
+        shutil.copy("results/separable_mult/" + str1, drivedir + str1)
+        shutil.copy("results/separable_mult/" + str2, drivedir + str2)
 
         return ("results/separable_mult/", str1, "results/separable_mult/", str2)
 
