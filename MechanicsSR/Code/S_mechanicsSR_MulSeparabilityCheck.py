@@ -140,7 +140,7 @@ def check_separability_mul(pathdir, filename):
                 mse= Er_mul / er_idx
                     
             if mse>tolerance:
-                print('no multiplicative separability Er_total =',mse)
+                print('No multiplicative separability Er_total =',mse)
                 #return 99999,j,rest_indx
                 if mse < min_error:
                     min_error = mse
