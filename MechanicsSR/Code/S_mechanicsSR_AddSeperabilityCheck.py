@@ -157,13 +157,13 @@ def check_separability_plus(pathdir, filename):
             
             # if error is above tolerance then quit
             if mse>tolerance:
-                print('no additive separability Er_total =',mse)
+                print('No additive separability Er_total =',mse)
                 #return 99999,j,rest_indx
                 if mse < min_error:
                     min_error = mse
 
             if mse<=tolerance:
-                print('addittive separability found, er =',mse)
+                print('Addittive separability found, er =',mse)
                 #print('variable_idx = ', j)
                 if mse < min_error:
                     min_error = mse
