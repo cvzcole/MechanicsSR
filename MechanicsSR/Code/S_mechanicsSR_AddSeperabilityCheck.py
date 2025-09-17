@@ -158,7 +158,9 @@ def check_separability_plus(pathdir, filename):
             # if error is above tolerance then quit
             if mse>tolerance:
                 print('no additive separability Er_total =',mse)
-                return 99999,j,rest_indx
+                #return 99999,j,rest_indx
+                if mse < min_error:
+                    min_error = mse
 
             if mse<=tolerance:
                 print('addittive separability found, er =',mse)
@@ -169,5 +171,7 @@ def check_separability_plus(pathdir, filename):
                     best_j = turn2list(rest_indx)
                 print(" ")
                 print("Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
-                    
-    return min_error, best_i, best_j
+    if min_error > tolerance:
+        return 99999, j, rest_indx
+    else
+        return min_error, best_i, best_j
