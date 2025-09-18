@@ -173,5 +173,5 @@ def check_separability_plus(pathdir, filename):
                 print("Best additivity separation so far: i =", best_i ,"j =", best_j, "error =", min_error, "\n")
     if min_error > tolerance:
         return 99999, j, rest_indx
-    else
+    else:
         return min_error, best_i, best_j
