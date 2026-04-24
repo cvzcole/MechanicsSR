@@ -24,7 +24,7 @@ def check_separability_plus(pathdir, filename):
     print(" ")
     print("Start to check additional separability \n")
     # separability tolerance (hyperparameter)
-    tolerance = 0.05
+    tolerance = 0.005
     # compare first 4 digits
     digits_tolerance = 1e-5
     # load the data
