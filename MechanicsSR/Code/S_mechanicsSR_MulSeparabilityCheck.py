@@ -25,7 +25,7 @@ def turn2list(value):
 
 def check_separability_mul(pathdir, filename):
     # separability tolerance (hyperparameter)
-    tolerance = 0.005
+    tolerance = 0.05
     print(" ")
     print("Start to check multiplication separability \n")
     # compare first 4 digits
